@@ -1,7 +1,6 @@
 package org.example.ebank.services;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.ebank.dtos.*;
 import org.example.ebank.entities.*;
 import org.example.ebank.enums.OperationType;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @AllArgsConstructor
-@Slf4j
 public class BankAccountServiceImpl implements BankAccountService {
 
     private CustomerRepo customerRepository;

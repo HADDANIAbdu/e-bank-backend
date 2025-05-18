@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @CrossOrigin("*")
+@RequestMapping("/api")
 public class CustomerController {
     private BankAccountService bankAccountService;
     @GetMapping("/customers")

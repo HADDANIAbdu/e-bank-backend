@@ -4,13 +4,16 @@ package org.example.ebank.controllers;
 import org.example.ebank.dtos.*;
 import org.example.ebank.exceptions.BalanceNotSufficientException;
 import org.example.ebank.exceptions.BankAccountNotFoundException;
+import org.example.ebank.exceptions.CustomerNotFoundException;
 import org.example.ebank.services.BankAccountService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
+@RequestMapping("/api")
 public class BankAccountController {
     private BankAccountService bankAccountService;
 
@@ -53,5 +56,56 @@ public class BankAccountController {
                 transferRequestDTO.getAccountSource(),
                 transferRequestDTO.getAccountDestination(),
                 transferRequestDTO.getAmount());
+    }
+    @PostMapping("/accounts/save/current-account")
+    public Map<String, String> saveCurrentAccount(@RequestBody CurrentAccountDTO currentAccountDTO) throws CustomerNotFoundException {
+        this.bankAccountService.saveCurrentAccount(
+                currentAccountDTO.getBalance(),
+                currentAccountDTO.getOverDraft(),
+                currentAccountDTO.getCustomerDTO().getId(),
+                currentAccountDTO.getStatus());
+        return  Map.of("status","success",
+                "message", "Account created Successfully !");
+    }
+    @PutMapping("/accounts/update/current-account/{Id}")
+    public Map<String, String> updateCurrentAccount(@PathVariable String Id, @RequestBody CurrentAccountDTO currentAccountDTO) throws CustomerNotFoundException {
+        this.bankAccountService.updateCurrentAccount(
+                Id,
+                currentAccountDTO.getBalance(),
+                currentAccountDTO.getOverDraft(),
+                currentAccountDTO.getCustomerDTO().getId(),
+                currentAccountDTO.getStatus()
+        );
+        return  Map.of("status","success",
+                "message", "Account updated Successfully !");
+    }
+    @PostMapping("/accounts/save/saving-account")
+    public Map<String, String> saveSavingAccount(@RequestBody SavingAccountDTO savingAccountDTO) throws CustomerNotFoundException {
+        this.bankAccountService.saveSavingAccount(
+                savingAccountDTO.getBalance(),
+                savingAccountDTO.getInterestRate(),
+                savingAccountDTO.getCustomerDTO().getId(),
+                savingAccountDTO.getStatus()
+        );
+        return  Map.of("status","success",
+                "message", "Account created Successfully !");
+    }
+    @PutMapping("/accounts/update/saving-account/{Id}")
+    public Map<String, String> updateSavingAccount(@PathVariable String Id, @RequestBody SavingAccountDTO savingAccountDTO) throws CustomerNotFoundException {
+        this.bankAccountService.updateSavingAccount(
+                Id,
+                savingAccountDTO.getBalance(),
+                savingAccountDTO.getInterestRate(),
+                savingAccountDTO.getCustomerDTO().getId(),
+                savingAccountDTO.getStatus()
+        );
+        return  Map.of("status","success",
+                "message", "Account updated Successfully !");
+    }
+    @DeleteMapping("/accounts/delete/{Id}")
+    public Map<String, String> deleteAccount(@PathVariable String Id) throws CustomerNotFoundException, BankAccountNotFoundException {
+        this.bankAccountService.deleteAccount(Id);
+        return  Map.of("status","success",
+                "message", "Account deleted Successfully !");
     }
 }

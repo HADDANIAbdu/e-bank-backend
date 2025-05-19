@@ -5,6 +5,7 @@ import org.example.ebank.entities.AppRole;
 import org.example.ebank.entities.AppUser;
 import org.example.ebank.repositories.AppRoleRepo;
 import org.example.ebank.repositories.UserRepo;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private PasswordEncoder passwordEncoder;
     private UserRepo userRepo;
     private AppRoleRepo appRoleRepo;
 
@@ -22,7 +24,7 @@ public class UserServiceImpl implements UserService {
         if(user != null) throw new RuntimeException("User already exists");
         if(!password.equals(confirmPassword)) throw new RuntimeException("Passwords do not match");
         user = AppUser.builder().username(username)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .email(email).build();
         userRepo.save(user);
         return user;
@@ -36,6 +38,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(Long userId) {
+        if(!userRepo.existsById(userId)) throw new RuntimeException("User does not exist");
+        userRepo.deleteById(userId);
+    }
+    @Override
     public void AddRoleToUser(String username, String role) {
         AppUser user = userRepo.findByUsername(username);
         AppRole appRole = appRoleRepo.findByRole(role);
@@ -47,10 +54,5 @@ public class UserServiceImpl implements UserService {
         AppUser user = userRepo.findByUsername(username);
         AppRole appRole = appRoleRepo.findByRole(role);
         user.getRoles().add(appRole);
-    }
-
-    @Override
-    public AppUser loadUserByUsername(String username) {
-        return userRepo.findByUsername(username);
     }
 }

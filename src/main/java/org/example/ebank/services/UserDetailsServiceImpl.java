@@ -2,6 +2,7 @@ package org.example.ebank.services;
 
 import lombok.AllArgsConstructor;
 import org.example.ebank.entities.AppUser;
+import org.example.ebank.repositories.UserRepo;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,11 +13,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserService userService;
+    private UserRepo userRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = userService.loadUserByUsername(username);
+        AppUser user = userRepo.findByUsername(username);
         if(user == null) throw new UsernameNotFoundException(String.format("User %s not found", username));
         String[] roles = user.getRoles().stream().map(u-> u.getRole()).toArray(String[]::new);
         UserDetails userDetails = User
